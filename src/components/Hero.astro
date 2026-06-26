@@ -3,7 +3,8 @@ import { bcmsField } from "../lib/bcms";
 import type { Home } from "../lib/cms";
 interface Props { data: Home; }
 const { data } = Astro.props;
-const words = data.heroTitle.split(" ");
+// Tolerate an empty/missing title so a partial CMS entry can't crash the static build.
+const words = (data.heroTitle ?? "").split(" ");
 ---
 <section class="hero on-ink">
   <div class="container">
