@@ -1,0 +1,17 @@
+---
+import { bcmsField } from "../lib/bcms";
+import type { Home } from "../lib/cms";
+interface Props { data: Home; }
+const { data } = Astro.props;
+---
+{data.ctaHeading && (
+  <section class="section container">
+    <div class="cta on-ink reveal">
+      <h2 {...bcmsField("home.ctaHeading")}>{data.ctaHeading}</h2>
+      {data.ctaBody && <p class="lead" {...bcmsField("home.ctaBody")}>{data.ctaBody}</p>}
+      {data.ctaButtonText && data.ctaButtonHref && (
+        <a class="btn btn--accent magnetic" href={data.ctaButtonHref}>{data.ctaButtonText} <span class="arrow">→</span></a>
+      )}
+    </div>
+  </section>
+)}

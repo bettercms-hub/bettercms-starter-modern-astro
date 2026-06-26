@@ -1,0 +1,25 @@
+---
+import { bcmsField } from "../lib/bcms";
+import type { Feature } from "../lib/cms";
+interface Props { heading?: string; data: Feature[]; }
+const { heading, data } = Astro.props;
+---
+{data.length > 0 && (
+  <section class="section container">
+    {heading && (
+      <div class="section-head reveal">
+        <p class="eyebrow">What we do</p>
+        <h2 {...bcmsField("home.featuresHeading")}>{heading}</h2>
+      </div>
+    )}
+    <div class="bento" {...bcmsField("home.features", "array")}>
+      {data.map((f) => (
+        <article class="feature reveal">
+          {f.icon && <div class="ic" aria-hidden>{f.icon}</div>}
+          <h3>{f.title}</h3>
+          {f.body && <p>{f.body}</p>}
+        </article>
+      ))}
+    </div>
+  </section>
+)}

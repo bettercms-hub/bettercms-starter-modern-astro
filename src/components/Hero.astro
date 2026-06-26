@@ -1,0 +1,33 @@
+---
+import { bcmsField } from "../lib/bcms";
+import type { Home } from "../lib/cms";
+interface Props { data: Home; }
+const { data } = Astro.props;
+const words = data.heroTitle.split(" ");
+---
+<section class="hero on-ink">
+  <div class="container">
+    {data.eyebrow && <p class="eyebrow hero-eyebrow" {...bcmsField("home.eyebrow")}>{data.eyebrow}</p>}
+    <h1 {...bcmsField("home.heroTitle")}>
+      <span class="reveal-words">
+        {words.map((w, i) => <span class="word"><span>{w}</span>{i < words.length - 1 ? " " : ""}</span>)}
+      </span>
+    </h1>
+    {data.heroSubtitle && <p class="lead hero-lead" {...bcmsField("home.heroSubtitle")}>{data.heroSubtitle}</p>}
+    <div class="hero-cta">
+      {data.primaryCtaText && data.primaryCtaHref && (
+        <a class="btn btn--accent magnetic" href={data.primaryCtaHref}>{data.primaryCtaText} <span class="arrow">→</span></a>
+      )}
+      {data.secondaryCtaText && data.secondaryCtaHref && (
+        <a class="btn btn--ghost magnetic" href={data.secondaryCtaHref}>{data.secondaryCtaText}</a>
+      )}
+    </div>
+  </div>
+  {data.heroImage?.url && (
+    <div class="container">
+      <figure class="hero-figure" {...bcmsField("home.heroImage", "image")}>
+        <img src={data.heroImage.url} alt={data.heroImage.alt ?? ""} />
+      </figure>
+    </div>
+  )}
+</section>

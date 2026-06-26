@@ -1,0 +1,34 @@
+---
+import Base from "../layouts/Base.astro";
+import { getSingleton } from "../lib/content";
+import { items, type Home, type Site } from "../lib/cms";
+import { seo } from "../lib/seo";
+import Hero from "../components/Hero.astro";
+import Stats from "../components/Stats.astro";
+import Features from "../components/Features.astro";
+import LogoMarquee from "../components/LogoMarquee.astro";
+import Testimonials from "../components/Testimonials.astro";
+import Cta from "../components/Cta.astro";
+
+const home = getSingleton<Home>("home");
+const site = getSingleton<Site>("site");
+const pageSeo = seo({
+  title: home?.heroTitle ?? "Home",
+  metaDescription: home?.heroSubtitle,
+  schema: { "@context": "https://schema.org", "@type": "WebSite", name: site?.brandName, description: site?.seoDescription },
+});
+---
+<Base seo={pageSeo}>
+  {home ? (
+    <Fragment>
+      <Hero data={home} />
+      <section class="section--tight"><div class="container"><Stats data={items(home.stats)} /></div></section>
+      <Features heading={home.featuresHeading} data={items(home.features)} />
+      <LogoMarquee data={items(home.logos)} />
+      <Testimonials data={items(home.testimonials)} />
+      <Cta data={home} />
+    </Fragment>
+  ) : (
+    <main class="container section"><h1>Home</h1><p class="lead">Publish the Home content in BetterCMS to populate this page.</p></main>
+  )}
+</Base>

@@ -1,0 +1,74 @@
+---
+import Base from "../layouts/Base.astro";
+import { getSingleton } from "../lib/content";
+import { items, refList, type About, type Author } from "../lib/cms";
+import { bcmsField } from "../lib/bcms";
+import { seo } from "../lib/seo";
+
+const about = getSingleton<About>("about");
+const values = items(about?.values);
+const stats = items(about?.stats);
+const team = refList<Author>(about?.team);
+const pageSeo = seo({
+  title: about?.heroTitle ?? "About",
+  metaDescription: about?.heroSubtitle,
+  schema: { "@context": "https://schema.org", "@type": "AboutPage", name: about?.heroTitle ?? "About" },
+});
+---
+<Base seo={pageSeo}>
+  <main>
+    <section class="section container">
+      <div class="section-head reveal">
+        {about?.eyebrow && <p class="eyebrow" {...bcmsField("about.eyebrow")}>{about.eyebrow}</p>}
+        <h1 {...bcmsField("about.heroTitle")}>{about?.heroTitle ?? "About"}</h1>
+        {about?.heroSubtitle && <p class="lead" style="margin-top:1.25rem" {...bcmsField("about.heroSubtitle")}>{about.heroSubtitle}</p>}
+      </div>
+      {about?.heroImage?.url && (
+        <figure class="hero-figure reveal" style="margin-top:3rem" {...bcmsField("about.heroImage", "image")}>
+          <img src={about.heroImage.url} alt={about.heroImage.alt ?? ""} />
+        </figure>
+      )}
+    </section>
+
+    {about?.story?.html && (
+      <section class="section--tight container">
+        <div class="article" style="padding-block:0">
+          {about.storyTitle && <h2 class="reveal" {...bcmsField("about.storyTitle")}>{about.storyTitle}</h2>}
+          <div class="prose reveal" style="margin-top:1.5rem" {...bcmsField("about.story", "richtext")} set:html={about.story.html} />
+        </div>
+      </section>
+    )}
+
+    {values.length > 0 && (
+      <section class="section container">
+        <div class="section-head reveal"><p class="eyebrow">How we work</p><h2>What we value</h2></div>
+        <div class="bento" {...bcmsField("about.values", "array")}>
+          {values.map((v) => <article class="feature reveal"><h3>{v.title}</h3>{v.body && <p>{v.body}</p>}</article>)}
+        </div>
+      </section>
+    )}
+
+    {stats.length > 0 && (
+      <section class="section--tight"><div class="container">
+        <div class="stats reveal" {...bcmsField("about.stats", "array")}>
+          {stats.map((s) => <div class="stat"><div class="num">{s.value}</div><div class="lbl">{s.label}</div></div>)}
+        </div>
+      </div></section>
+    )}
+
+    {team.length > 0 && (
+      <section class="section container">
+        <div class="section-head reveal"><p class="eyebrow">The people</p><h2>Meet the studio</h2></div>
+        <div class="card-grid" {...bcmsField("about.team", "reference")}>
+          {team.map((m) => (
+            <article class="feature reveal" style="display:grid;gap:1rem">
+              {m.avatar?.url && <img src={m.avatar.url} alt={m.avatar.alt ?? m.name} style="width:4rem;height:4rem;border-radius:999px;object-fit:cover" />}
+              <div><h3 style="font-size:var(--step-1)">{m.name}</h3>{m.role && <p style="color:var(--accent-strong);font-weight:600">{m.role}</p>}</div>
+              {m.bio && <p style="color:var(--muted)">{m.bio}</p>}
+            </article>
+          ))}
+        </div>
+      </section>
+    )}
+  </main>
+</Base>

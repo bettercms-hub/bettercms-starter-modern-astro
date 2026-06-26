@@ -1,0 +1,20 @@
+---
+import Base from "../../layouts/Base.astro";
+import { listEntries } from "../../lib/content";
+import type { BlogPost } from "../../lib/cms";
+import { seo } from "../../lib/seo";
+import BlogCard from "../../components/BlogCard.astro";
+
+const posts = listEntries<BlogPost>("blog-post");
+const pageSeo = seo({ title: "Journal", metaDescription: "Ideas on design, engineering, and the craft of shipping." });
+---
+<Base seo={pageSeo}>
+  <main class="section container">
+    <div class="section-head reveal"><p class="eyebrow">Journal</p><h1>Ideas on design, code, and craft</h1></div>
+    {posts.length ? (
+      <div class="card-grid">{posts.map((p) => <BlogCard post={p} />)}</div>
+    ) : (
+      <p class="lead" style="margin-top:2rem">No posts published yet.</p>
+    )}
+  </main>
+</Base>

@@ -1,0 +1,12 @@
+---
+import type { Logo } from "../lib/cms";
+interface Props { data: Logo[]; }
+const { data } = Astro.props;
+const loop = [...data, ...data];
+---
+{data.length > 0 && (
+  <section class="section--tight">
+    <div class="container reveal"><p class="eyebrow" style="margin-bottom:1.5rem">Trusted by teams who care about craft</p></div>
+    <div class="marquee"><div class="marquee-track">{loop.map((l) => <span class="logo">{l.name ?? l.image?.alt}</span>)}</div></div>
+  </section>
+)}

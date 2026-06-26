@@ -1,0 +1,45 @@
+---
+import type { DeliveryForm } from "@betttercms/sdk";
+interface Props { form: DeliveryForm; }
+const { form } = Astro.props;
+const honeypot = form.honeypotField ?? null;
+const fields = form.fields.filter((f) => f.key !== honeypot);
+const apiUrl = import.meta.env.PUBLIC_BCMS_API_URL ?? "https://api.bettercms.ai";
+/** Map delivery field types to valid HTML <input type> values. */
+type InputType = "tel" | "text" | "email" | "url" | "number" | "date";
+const htmlType = (t: string): InputType =>
+  t === "phone" ? "tel" : t === "hidden" ? "text" : (t as InputType);
+---
+<form class="form" data-bcms-form data-form-id={form.id} data-api={apiUrl} novalidate>
+  {fields.map((f) => (
+    <div class="field">
+      {f.type !== "checkbox" && f.type !== "consent" && (
+        <label for={`f-${f.key}`}>{f.label}{f.required && <span class="req"> *</span>}</label>
+      )}
+      {f.type === "textarea" ? (
+        <textarea id={`f-${f.key}`} class="textarea" name={f.key} placeholder={f.placeholder} required={f.required}></textarea>
+      ) : f.type === "select" ? (
+        <select id={`f-${f.key}`} class="select" name={f.key} required={f.required}>
+          <option value="">Select…</option>
+          {(f.options ?? []).map((o) => <option value={o}>{o}</option>)}
+        </select>
+      ) : f.type === "checkbox" || f.type === "consent" ? (
+        <label for={`f-${f.key}`} style="display:flex;gap:.6rem;align-items:center">
+          <input id={`f-${f.key}`} type="checkbox" name={f.key} value="true" required={f.required} />
+          <span>{f.label}{f.required && <span class="req"> *</span>}</span>
+        </label>
+      ) : (
+        <input id={`f-${f.key}`} class="input" type={htmlType(f.type)} name={f.key} placeholder={f.placeholder} required={f.required} />
+      )}
+      <span class="field-error" data-error={f.key}></span>
+    </div>
+  ))}
+  {honeypot && (
+    <div class="visually-hidden" aria-hidden="true"><input tabindex="-1" autocomplete="off" name={honeypot} /></div>
+  )}
+  <p class="field-error" data-form-general hidden>Something went wrong. Please try again.</p>
+  <button class="btn btn--accent" type="submit">{form.submitLabel ?? "Send"} <span class="arrow">→</span></button>
+  <p class="form-status ok" data-form-success hidden>{form.successMessage ?? "Thanks! We'll be in touch soon."}</p>
+</form>
+
+<script>import "../scripts/forms";</script>

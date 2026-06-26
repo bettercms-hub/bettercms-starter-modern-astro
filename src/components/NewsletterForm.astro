@@ -1,0 +1,16 @@
+---
+import type { DeliveryForm } from "@betttercms/sdk";
+interface Props { form: DeliveryForm; }
+const { form } = Astro.props;
+const honeypot = form.honeypotField ?? null;
+const emailKey = form.fields.find((f) => f.type === "email")?.key ?? "email";
+const apiUrl = import.meta.env.PUBLIC_BCMS_API_URL ?? "https://api.bettercms.ai";
+---
+<form class="newsletter" data-bcms-form data-form-id={form.id} data-api={apiUrl} novalidate>
+  <input class="input" type="email" name={emailKey} required placeholder="you@company.com" aria-label="Email" />
+  {honeypot && <input class="visually-hidden" tabindex="-1" autocomplete="off" name={honeypot} aria-hidden="true" />}
+  <button class="btn" type="submit">{form.submitLabel ?? "Subscribe"}</button>
+  <p class="form-status ok" data-form-success hidden>{form.successMessage ?? "You're subscribed."}</p>
+</form>
+
+<script>import "../scripts/forms";</script>
