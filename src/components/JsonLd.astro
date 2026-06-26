@@ -1,0 +1,7 @@
+---
+/** Render JSON-LD structured data (one <script> per schema object, 50 KB cap each). */
+interface Props { data: Array<Record<string, unknown>>; }
+const { data } = Astro.props;
+const blobs = data.filter(Boolean).map((s) => JSON.stringify(s)).filter((j) => j.length <= 50_000);
+---
+{blobs.map((json) => <script type="application/ld+json" is:inline set:html={json} />)}

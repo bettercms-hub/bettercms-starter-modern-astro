@@ -1,0 +1,24 @@
+{
+  "name": "bettercms-starter-modern-astro",
+  "version": "0.1.0",
+  "private": true,
+  "description": "BetterCMS Modern Aesthetic Starter (Astro) — a premium, animated studio site (Home, About, Contact with form, Blog, Case Studies, search, schema markup, custom code), rendered from a BetterCMS project.",
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "fetch-content": "node scripts/fetch-content.mjs"
+  },
+  "dependencies": {
+    "@betttercms/sdk": "^1.6.0",
+    "@betttercms/types": "^1.5.0",
+    "astro": "^5.0.0",
+    "gsap": "^3.13.0"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.9",
+    "@types/node": "^26.0.1",
+    "typescript": "^6.0.3"
+  }
+}

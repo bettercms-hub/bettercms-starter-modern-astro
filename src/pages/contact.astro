@@ -1,0 +1,30 @@
+---
+import Base from "../layouts/Base.astro";
+import { getForm, getSingleton } from "../lib/content";
+import { bcmsField } from "../lib/bcms";
+import type { Contact } from "../lib/cms";
+import { seo } from "../lib/seo";
+import ContactForm from "../components/ContactForm.astro";
+
+const contact = getSingleton<Contact>("contact");
+const form = getForm("Contact");
+const pageSeo = seo({
+  title: contact?.heroTitle ?? "Contact",
+  metaDescription: contact?.heroSubtitle,
+  schema: { "@context": "https://schema.org", "@type": "ContactPage", name: contact?.heroTitle ?? "Contact" },
+});
+---
+<Base seo={pageSeo}>
+  <main class="section container">
+    <div class="split">
+      <div class="reveal">
+        {contact?.eyebrow && <p class="eyebrow" {...bcmsField("contact.eyebrow")}>{contact.eyebrow}</p>}
+        <h1 {...bcmsField("contact.heroTitle")}>{contact?.heroTitle ?? "Get in touch"}</h1>
+        {contact?.heroSubtitle && <p class="lead" style="margin-top:1.25rem" {...bcmsField("contact.heroSubtitle")}>{contact.heroSubtitle}</p>}
+      </div>
+      <div class="form-card reveal">
+        {form ? <ContactForm form={form} /> : <p class="lead">Add a form named “Contact” in BetterCMS to enable this form.</p>}
+      </div>
+    </div>
+  </main>
+</Base>

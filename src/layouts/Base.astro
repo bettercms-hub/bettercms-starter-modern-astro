@@ -1,0 +1,47 @@
+---
+import "../styles/global.css";
+import { ClientRouter } from "astro:transitions";
+import type { ResolvedSeo } from "@betttercms/sdk";
+import { getForm, getSingleton } from "../lib/content";
+import type { Site } from "../lib/cms";
+import Nav from "../components/Nav.astro";
+import Footer from "../components/Footer.astro";
+import JsonLd from "../components/JsonLd.astro";
+
+interface Props { seo: ResolvedSeo; }
+const { seo } = Astro.props;
+const site = getSingleton<Site>("site");
+const newsletter = getForm("Newsletter");
+---
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{seo.title}</title>
+    {seo.description && <meta name="description" content={seo.description} />}
+    {seo.canonical && <link rel="canonical" href={seo.canonical} />}
+    <meta property="og:title" content={seo.og.title} />
+    <meta property="og:description" content={seo.og.description} />
+    <meta property="og:type" content={seo.og.type} />
+    {seo.og.image && <meta property="og:image" content={seo.og.image} />}
+    <meta name="twitter:card" content={seo.twitter.card || "summary_large_image"} />
+    {seo.twitter.image && <meta name="twitter:image" content={seo.twitter.image} />}
+    {seo.twitter.site && <meta name="twitter:site" content={seo.twitter.site} />}
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..600&family=Inter:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <JsonLd data={seo.jsonLd} />
+    {site?.customHeadHtml && <Fragment set:html={site.customHeadHtml} />}
+    <ClientRouter />
+  </head>
+  <body>
+    <Nav site={site} />
+    <slot />
+    <Footer site={site} newsletter={newsletter} />
+    {site?.customBodyEndHtml && <Fragment set:html={site.customBodyEndHtml} />}
+    <script>import "../scripts/motion";</script>
+  </body>
+</html>
