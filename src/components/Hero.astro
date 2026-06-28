@@ -11,7 +11,7 @@ const words = (data.heroTitle ?? "").split(" ");
     {data.eyebrow && <p class="eyebrow hero-eyebrow" {...bcmsField("home.eyebrow")}>{data.eyebrow}</p>}
     <h1 {...bcmsField("home.heroTitle")}>
       <span class="reveal-words">
-        {words.map((w, i) => <span class="word"><span>{w}</span>{i < words.length - 1 ? " " : ""}</span>)}
+        {words.map((w, i) => <>{i > 0 ? " " : ""}<span class="word"><span>{w}</span></span></>)}
       </span>
     </h1>
     {data.heroSubtitle && <p class="lead hero-lead" {...bcmsField("home.heroSubtitle")}>{data.heroSubtitle}</p>}

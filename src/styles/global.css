@@ -7,31 +7,54 @@
    cream-editorial reflexes for studios.
    ============================================================================================ */
 
+/* Styling built on Tailwind CSS v4. Design tokens live in @theme (so they also
+   generate utilities — bg-paper, text-ink, font-display — for the hand-written
+   components), and the studio's rich component + motion CSS is authored against the
+   same tokens in @layer/plain rules below. The motion JS (GSAP, IntersectionObserver)
+   selects elements by semantic class (.hero, .reveal, .word, .stat, .magnetic, …), so
+   those classes stay as authored CSS rather than utilities on the markup. */
+@import "tailwindcss";
+
 /* Native cross-document View Transitions (no-op where unsupported / during client nav). */
 @view-transition { navigation: auto; }
 
-:root {
-  /* Neutrals — tinted warm (hue ~80) so nothing is a dead grey. */
-  --ink: oklch(0.17 0.012 75);
-  --ink-2: oklch(0.23 0.014 75);
-  --paper: oklch(0.975 0.008 85);
-  --paper-2: oklch(0.945 0.01 85);
-  --line: oklch(0.9 0.01 85);
-  --line-strong: oklch(0.82 0.012 85);
-  --muted: oklch(0.55 0.012 75);
-  --muted-on-ink: oklch(0.74 0.014 80);
+@theme {
+  /* Neutrals tinted warm (hue ~80) + one tangerine accent. Tailwind color and font
+     token names so utilities exist; the rules below alias them as --ink, --accent, etc. */
+  --color-ink: oklch(0.17 0.012 75);
+  --color-ink-2: oklch(0.23 0.014 75);
+  --color-paper: oklch(0.975 0.008 85);
+  --color-paper-2: oklch(0.945 0.01 85);
+  --color-line: oklch(0.9 0.01 85);
+  --color-line-strong: oklch(0.82 0.012 85);
+  --color-muted: oklch(0.55 0.012 75);
+  --color-muted-on-ink: oklch(0.74 0.014 80);
+  --color-accent: oklch(0.62 0.27 352);        /* hot fuchsia — the one loud color */
+  --color-accent-strong: oklch(0.55 0.23 352); /* readable fuchsia for small text on paper */
+  --color-accent-soft: oklch(0.92 0.07 352);
 
-  /* Accent — warm tangerine. The only saturated color; used sparingly for pointing. */
-  --accent: oklch(0.7 0.19 47);
-  --accent-strong: oklch(0.63 0.2 45);
-  --accent-soft: oklch(0.93 0.05 60);
+  --font-sans: "Schibsted Grotesk", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-display: "Gloock", ui-serif, Georgia, "Times New Roman", serif;
+
+  --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+:root {
+  /* Short aliases the component/motion CSS uses (canonical values in @theme). */
+  --ink: var(--color-ink);
+  --ink-2: var(--color-ink-2);
+  --paper: var(--color-paper);
+  --paper-2: var(--color-paper-2);
+  --line: var(--color-line);
+  --line-strong: var(--color-line-strong);
+  --muted: var(--color-muted);
+  --muted-on-ink: var(--color-muted-on-ink);
+  --accent: var(--color-accent);
+  --accent-strong: var(--color-accent-strong);
+  --accent-soft: var(--color-accent-soft);
 
   --fg: var(--ink);
   --bg: var(--paper);
-
-  /* Type */
-  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  --font-display: "Fraunces", ui-serif, Georgia, "Times New Roman", serif;
 
   /* Fluid type scale (~1.28 ratio) */
   --step--1: clamp(0.83rem, 0.8rem + 0.15vw, 0.92rem);
@@ -69,6 +92,13 @@ body {
   background: var(--bg);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+  position: relative;
+}
+/* Fine film grain over the whole page — adds tactile depth to the warm paper. */
+body::before {
+  content: ""; position: fixed; inset: 0; z-index: 1; pointer-events: none;
+  opacity: 0.04; mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
 img, svg, video { display: block; max-width: 100%; height: auto; }
@@ -173,7 +203,7 @@ h3 { font-size: var(--step-1); letter-spacing: -0.01em; }
 .hero { position: relative; overflow: clip; padding-block: clamp(5rem, 3rem + 10vw, 11rem); }
 .hero::after { /* soft warm glow, not glass */
   content: ""; position: absolute; inset: -20% 30% 40% -10%; z-index: 0;
-  background: radial-gradient(60% 60% at 30% 30%, oklch(0.7 0.19 47 / 0.18), transparent 70%);
+  background: radial-gradient(60% 60% at 30% 30%, oklch(from var(--color-accent) l c h / 0.22), transparent 70%);
   filter: blur(20px); pointer-events: none;
 }
 .hero > * { position: relative; z-index: 1; }
