@@ -33,7 +33,7 @@ for (const e of entries?.items ?? []) {
   (collections[model] ??= []).push(e);
 }
 
-const projectId = process.env.BCMS_PROJECT_ID ?? entries?.items?.[0]?._meta?.projectId ?? null;
+const projectId = process.env.BCMS_PROJECT_ID ?? entries?.projectId ?? null;
 
 const snapshot = {
   $schema: "bcms-content/v1",
