@@ -1,4 +1,4 @@
-import { resolveSeo, type ResolvedSeo } from "@betttercms/sdk";
+import { resolveSeo, type ResolvedSeo } from "@bettercms-ai/sdk";
 import { getSingleton } from "./content";
 import type { Author, BlogPost, CaseStudy, Site } from "./cms";
 

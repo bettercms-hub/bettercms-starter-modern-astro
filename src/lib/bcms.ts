@@ -1,6 +1,6 @@
 /**
  * Live-preview binding: spread `bcmsField(path, kind)` onto an element rendering a CMS field so the
- * BetterCMS dashboard live preview can map it to an editable overlay. Mirrors @betttercms/codegen
+ * BetterCMS dashboard live preview can map it to an editable overlay. Mirrors @bettercms-ai/codegen
  * output — attributes are emitted ONLY when `BCMS_ANNOTATE=1` (preview builds), so production builds
  * carry zero overhead. Falls back to the platform's content-match binding when absent.
  *
