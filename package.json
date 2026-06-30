@@ -11,8 +11,8 @@
     "fetch-content": "node scripts/fetch-content.mjs"
   },
   "dependencies": {
-    "@betttercms/sdk": "^1.6.0",
-    "@betttercms/types": "^1.5.0",
+    "@bettercms-ai/sdk": "^1.6.0",
+    "@bettercms-ai/types": "^1.5.0",
     "astro": "^5.0.0",
     "gsap": "^3.13.0"
   },

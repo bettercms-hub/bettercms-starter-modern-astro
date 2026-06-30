@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
-import type { DeliveryForm } from "@betttercms/sdk";
+import type { DeliveryForm } from "@bettercms-ai/sdk";
 
 /**
  * Read the build snapshot (`bcms-content.json`): entries grouped into `collections` by model slug
