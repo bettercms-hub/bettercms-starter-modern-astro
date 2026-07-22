@@ -36,9 +36,10 @@ export type Site = {
 export type Author = { name: string; role?: string; bio?: string; avatar?: Image };
 
 export type Home = {
-  eyebrow?: string;
-  heroTitle: string;
-  heroSubtitle?: string;
+  // Inline rich-text (formattable in the Visual Editor) — seeded as `{ html, inline: true }`.
+  eyebrow?: RichText;
+  heroTitle: RichText;
+  heroSubtitle?: RichText;
   heroImage?: Image;
   primaryCtaText?: string;
   primaryCtaHref?: string;
@@ -92,6 +93,10 @@ export type CaseStudy = {
 // ── Accessors ─────────────────────────────────────────────────────────────────────────────────
 /** Unwrap a zoned-repeatable array field to a plain list. */
 export const items = <T>(field?: Repeatable<T>): T[] => (Array.isArray(field?.repeatable) ? field.repeatable : []);
+
+/** Plain text from an inline rich-text field — for SEO titles/meta and other attribute contexts. */
+export const plain = (rt?: RichText | string): string =>
+  typeof rt === "string" ? rt : (rt?.html ?? "").replace(/<[^>]+>/g, "").trim();
 
 /** Resolve a single hydrated reference (bare id string at depth 0 → null). */
 export const refData = <T>(ref?: Hydrated<T> | string): T | null =>

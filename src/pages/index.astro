@@ -1,7 +1,7 @@
 ---
 import Base from "../layouts/Base.astro";
 import { getSingleton } from "../lib/content";
-import { items, type Home, type Site } from "../lib/cms";
+import { items, plain, type Home, type Site } from "../lib/cms";
 import { seo } from "../lib/seo";
 import Hero from "../components/Hero.astro";
 import Stats from "../components/Stats.astro";
@@ -13,8 +13,8 @@ import Cta from "../components/Cta.astro";
 const home = getSingleton<Home>("home");
 const site = getSingleton<Site>("site");
 const pageSeo = seo({
-  title: home?.heroTitle ?? "Home",
-  metaDescription: home?.heroSubtitle,
+  title: plain(home?.heroTitle) || "Home",
+  metaDescription: plain(home?.heroSubtitle),
   schema: { "@context": "https://schema.org", "@type": "WebSite", name: site?.brandName, description: site?.seoDescription },
 });
 ---
