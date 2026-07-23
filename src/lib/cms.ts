@@ -23,7 +23,7 @@ export type Metric = { value: string; label: string };
 export type Site = {
   brandName: string;
   navLinks?: Repeatable<NavLink>;
-  footerTagline?: string;
+  footerTagline?: RichText;
   socials?: Repeatable<Social>;
   seoTitle?: string;
   seoDescription?: string;
@@ -46,12 +46,12 @@ export type Home = {
   secondaryCtaText?: string;
   secondaryCtaHref?: string;
   stats?: Repeatable<Stat>;
-  featuresHeading?: string;
+  featuresHeading?: RichText;
   features?: Repeatable<Feature>;
   logos?: Repeatable<Logo>;
   testimonials?: Repeatable<Testimonial>;
-  ctaHeading?: string;
-  ctaBody?: string;
+  ctaHeading?: RichText;
+  ctaBody?: RichText;
   ctaButtonText?: string;
   ctaButtonHref?: string;
 };

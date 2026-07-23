@@ -1,15 +1,15 @@
 ---
 import { bcmsField } from "../lib/bcms";
-import type { Feature } from "../lib/cms";
-interface Props { heading?: string; data: Feature[]; }
+import type { Feature, RichText } from "../lib/cms";
+interface Props { heading?: RichText; data: Feature[]; }
 const { heading, data } = Astro.props;
 ---
 {data.length > 0 && (
   <section class="section container">
-    {heading && (
+    {heading?.html && (
       <div class="section-head reveal">
         <p class="eyebrow">What we do</p>
-        <h2 {...bcmsField("home.featuresHeading")}>{heading}</h2>
+        <h2 {...bcmsField("home.featuresHeading", "richtext")} set:html={heading.html} />
       </div>
     )}
     <div class="bento" {...bcmsField("home.features", "array")}>
