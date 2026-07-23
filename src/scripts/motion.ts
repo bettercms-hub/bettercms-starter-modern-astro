@@ -5,6 +5,40 @@ gsap.registerPlugin(ScrollTrigger);
 
 let io: IntersectionObserver | null = null;
 
+/**
+ * Wrap each word of `.reveal-words` in `.word > span` for the hero reveal stagger — at
+ * RUNTIME, so it survives the inline rich-text title now rendered via `set:html`. Only text
+ * nodes are split; inline mark elements (`<strong>`, `<em>`, `<a>`) are recursed into, so a
+ * bolded word keeps its `<strong>` around the wrapped span.
+ */
+function splitWords(root: Element): void {
+  if (root.querySelector(".word")) return; // idempotent
+  const wrap = (text: string): DocumentFragment => {
+    const frag = document.createDocumentFragment();
+    for (const tok of text.split(/(\s+)/)) {
+      if (tok === "") continue;
+      if (/^\s+$/.test(tok)) { frag.appendChild(document.createTextNode(tok)); continue; }
+      const word = document.createElement("span");
+      word.className = "word";
+      const inner = document.createElement("span");
+      inner.textContent = tok;
+      word.appendChild(inner);
+      frag.appendChild(word);
+    }
+    return frag;
+  };
+  const walk = (node: Node): void => {
+    for (const child of Array.from(node.childNodes)) {
+      if (child.nodeType === Node.TEXT_NODE) {
+        if ((child.textContent ?? "").trim()) child.parentNode?.replaceChild(wrap(child.textContent ?? ""), child);
+      } else if (child.nodeType === Node.ELEMENT_NODE) {
+        walk(child);
+      }
+    }
+  };
+  walk(root);
+}
+
 /** Wire motion for the current page. Re-runs after every Astro view transition. */
 function setup() {
   if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
@@ -28,6 +62,8 @@ function setup() {
   // Hero intro timeline + parallax (GSAP).
   const hero = document.querySelector(".hero");
   if (hero) {
+    const revealWords = hero.querySelector(".reveal-words");
+    if (revealWords) splitWords(revealWords);
     gsap
       .timeline({ defaults: { ease: "power3.out" } })
       .from(".hero .hero-eyebrow", { autoAlpha: 0, y: 12, duration: 0.5 })

@@ -4,11 +4,11 @@ import type { Home } from "../lib/cms";
 interface Props { data: Home; }
 const { data } = Astro.props;
 ---
-{data.ctaHeading && (
+{data.ctaHeading?.html && (
   <section class="section container">
     <div class="cta on-ink reveal">
-      <h2 {...bcmsField("home.ctaHeading")}>{data.ctaHeading}</h2>
-      {data.ctaBody && <p class="lead" {...bcmsField("home.ctaBody")}>{data.ctaBody}</p>}
+      <h2 {...bcmsField("home.ctaHeading", "richtext")} set:html={data.ctaHeading.html} />
+      {data.ctaBody?.html && <p class="lead" {...bcmsField("home.ctaBody", "richtext")} set:html={data.ctaBody.html} />}
       {data.ctaButtonText && data.ctaButtonHref && (
         <a class="btn btn--accent magnetic" href={data.ctaButtonHref}>{data.ctaButtonText} <span class="arrow">→</span></a>
       )}
