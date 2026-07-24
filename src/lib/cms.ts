@@ -5,6 +5,16 @@
  */
 export type Image = { url: string; alt?: string };
 export type RichText = { html?: string };
+/**
+ * A field that may arrive as EITHER a bare string or a rich-text envelope.
+ *
+ * Any `text` field can be switched to `richtext` in the Visual Editor (the canvas toolbar
+ * offers it, so authors will), and from that moment delivery returns `{ format, value, html }`
+ * instead of a string. Interpolating the raw value then prints `[object Object]` on the live
+ * site. Every author-editable text field is typed this way and rendered through `rich()` (for
+ * markup) or `plain()` (for attributes/SEO) — so flipping the type in the CMS is a no-op here.
+ */
+export type TextOrRich = string | RichText;
 export type Repeatable<T> = { repeatable?: T[] };
 /** A depth≥1 hydrated reference: the nested entry in raw delivery shape. */
 export type Hydrated<T> = { slug: string; data?: T };
@@ -57,22 +67,22 @@ export type Home = {
 };
 
 export type About = {
-  eyebrow?: string;
-  heroTitle: string;
-  heroSubtitle?: string;
+  eyebrow?: TextOrRich;
+  heroTitle: TextOrRich;
+  heroSubtitle?: TextOrRich;
   heroImage?: Image;
-  storyTitle?: string;
+  storyTitle?: TextOrRich;
   story?: RichText;
   values?: Repeatable<ValueItem>;
   stats?: Repeatable<Stat>;
   team?: Hydrated<Author>[] | string[];
 };
 
-export type Contact = { eyebrow?: string; heroTitle: string; heroSubtitle?: string };
+export type Contact = { eyebrow?: TextOrRich; heroTitle: TextOrRich; heroSubtitle?: TextOrRich };
 
 export type BlogPost = {
-  title: string;
-  excerpt?: string;
+  title: TextOrRich;
+  excerpt?: TextOrRich;
   coverImage?: Image;
   body?: RichText;
   author?: Hydrated<Author> | string;
@@ -81,9 +91,9 @@ export type BlogPost = {
 };
 
 export type CaseStudy = {
-  title: string;
+  title: TextOrRich;
   client?: string;
-  summary?: string;
+  summary?: TextOrRich;
   coverImage?: Image;
   body?: RichText;
   metrics?: Repeatable<Metric>;
@@ -94,9 +104,32 @@ export type CaseStudy = {
 /** Unwrap a zoned-repeatable array field to a plain list. */
 export const items = <T>(field?: Repeatable<T>): T[] => (Array.isArray(field?.repeatable) ? field.repeatable : []);
 
-/** Plain text from an inline rich-text field — for SEO titles/meta and other attribute contexts. */
-export const plain = (rt?: RichText | string): string =>
-  typeof rt === "string" ? rt : (rt?.html ?? "").replace(/<[^>]+>/g, "").trim();
+/** Plain text from a text-or-rich field — for SEO titles/meta and other attribute contexts. */
+export const plain = (rt?: TextOrRich): string =>
+  typeof rt === "string" ? rt : decodeEntities((rt?.html ?? "").replace(/<[^>]+>/g, "")).trim();
+
+/**
+ * Renderable HTML for a text-or-rich field, for `set:html`. Rich text keeps its inline marks
+ * (the server sanitizes `html` at write time); a bare string is escaped, so a plain field can
+ * never inject markup. `fallback` is used when the field is empty.
+ */
+export const rich = (rt?: TextOrRich, fallback = ""): string => {
+  const html = typeof rt === "string" ? escapeHtml(rt) : (rt?.html ?? "");
+  return html.trim() ? html : escapeHtml(fallback);
+};
+
+const escapeHtml = (s: string): string =>
+  s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+/** Entities survive tag-stripping; an attribute context would double-escape them. */
+const decodeEntities = (s: string): string =>
+  s
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"')
+    .replace(/&#0?39;/g, "'")
+    .replace(/&nbsp;/g, " ")
+    .replace(/&amp;/g, "&");
 
 /** Resolve a single hydrated reference (bare id string at depth 0 → null). */
 export const refData = <T>(ref?: Hydrated<T> | string): T | null =>

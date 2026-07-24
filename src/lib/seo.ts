@@ -1,6 +1,6 @@
 import { resolveSeo, type ResolvedSeo } from "@bettercms-ai/sdk";
 import { getSingleton } from "./content";
-import type { Author, BlogPost, CaseStudy, Site } from "./cms";
+import { plain, type Author, type BlogPost, type CaseStudy, type Site } from "./cms";
 
 type Json = Record<string, unknown>;
 type SeoArgs = { title: string; metaTitle?: string; metaDescription?: string; schema?: Json | Json[] };
@@ -43,8 +43,8 @@ export function blogPostingSchema(post: BlogPost, author: Author | null): Json {
   return {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
-    headline: post.title,
-    description: post.excerpt,
+    headline: plain(post.title),
+    description: plain(post.excerpt),
     ...(post.coverImage?.url ? { image: post.coverImage.url } : {}),
     ...(post.publishedDate ? { datePublished: post.publishedDate } : {}),
     ...(author ? { author: { "@type": "Person", name: author.name, jobTitle: author.role } } : {}),
@@ -55,8 +55,8 @@ export function caseStudySchema(c: CaseStudy): Json {
   return {
     "@context": "https://schema.org",
     "@type": "Article",
-    headline: c.title,
-    description: c.summary,
+    headline: plain(c.title),
+    description: plain(c.summary),
     ...(c.coverImage?.url ? { image: c.coverImage.url } : {}),
     ...(c.publishedDate ? { datePublished: c.publishedDate } : {}),
     ...(c.client ? { about: c.client } : {}),

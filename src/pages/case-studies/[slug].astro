@@ -1,7 +1,7 @@
 ---
 import Base from "../../layouts/Base.astro";
 import { listEntries, getEntry } from "../../lib/content";
-import { items, type CaseStudy } from "../../lib/cms";
+import { items, plain, rich, type CaseStudy } from "../../lib/cms";
 import { bcmsField } from "../../lib/bcms";
 import { seo, caseStudySchema } from "../../lib/seo";
 
@@ -15,15 +15,15 @@ if (!study) throw new Error(`case study not found: ${slug}`);
 
 const f = study.data;
 const metrics = items(f.metrics);
-const pageSeo = seo({ title: f.title, metaDescription: f.summary, schema: caseStudySchema(f) });
+const pageSeo = seo({ title: plain(f.title), metaDescription: plain(f.summary), schema: caseStudySchema(f) });
 ---
 <Base seo={pageSeo}>
   <main>
     <article class="article">
       <a class="back-link" href="/case-studies">← Back to work</a>
       {f.client && <p class="kicker" style="color:var(--accent-strong);font-weight:600;margin-top:1.5rem">{f.client}</p>}
-      <h1 {...bcmsField("case-study.title")} style="margin-top:.5rem">{f.title}</h1>
-      {f.summary && <p class="lead" style="margin-top:1rem">{f.summary}</p>}
+      <h1 {...bcmsField("case-study.title")} style="margin-top:.5rem" set:html={rich(f.title)} />
+      {f.summary && <p class="lead" style="margin-top:1rem" set:html={rich(f.summary)} />}
       {f.coverImage?.url && <img class="cover" src={f.coverImage.url} alt={f.coverImage.alt ?? ""} />}
       {metrics.length > 0 && (
         <div class="stats" style="margin-bottom:2rem" {...bcmsField("case-study.metrics", "array")}>

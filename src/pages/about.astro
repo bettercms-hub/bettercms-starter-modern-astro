@@ -1,7 +1,7 @@
 ---
 import Base from "../layouts/Base.astro";
 import { getSingleton } from "../lib/content";
-import { items, refList, type About, type Author } from "../lib/cms";
+import { items, plain, refList, rich, type About, type Author } from "../lib/cms";
 import { bcmsField } from "../lib/bcms";
 import { seo } from "../lib/seo";
 
@@ -10,18 +10,18 @@ const values = items(about?.values);
 const stats = items(about?.stats);
 const team = refList<Author>(about?.team);
 const pageSeo = seo({
-  title: about?.heroTitle ?? "About",
-  metaDescription: about?.heroSubtitle,
-  schema: { "@context": "https://schema.org", "@type": "AboutPage", name: about?.heroTitle ?? "About" },
+  title: plain(about?.heroTitle) || "About",
+  metaDescription: plain(about?.heroSubtitle),
+  schema: { "@context": "https://schema.org", "@type": "AboutPage", name: plain(about?.heroTitle) || "About" },
 });
 ---
 <Base seo={pageSeo}>
   <main>
     <section class="section container">
       <div class="section-head reveal">
-        {about?.eyebrow && <p class="eyebrow" {...bcmsField("about.eyebrow")}>{about.eyebrow}</p>}
-        <h1 {...bcmsField("about.heroTitle")}>{about?.heroTitle ?? "About"}</h1>
-        {about?.heroSubtitle && <p class="lead" style="margin-top:1.25rem" {...bcmsField("about.heroSubtitle")}>{about.heroSubtitle}</p>}
+        {about?.eyebrow && <p class="eyebrow" {...bcmsField("about.eyebrow")} set:html={rich(about.eyebrow)} />}
+        <h1 {...bcmsField("about.heroTitle")} set:html={rich(about?.heroTitle, "About")} />
+        {about?.heroSubtitle && <p class="lead" style="margin-top:1.25rem" {...bcmsField("about.heroSubtitle")} set:html={rich(about.heroSubtitle)} />}
       </div>
       {about?.heroImage?.url && (
         <figure class="hero-figure reveal" style="margin-top:3rem" {...bcmsField("about.heroImage", "image")}>
@@ -33,7 +33,7 @@ const pageSeo = seo({
     {about?.story?.html && (
       <section class="section--tight container">
         <div class="article" style="padding-block:0">
-          {about.storyTitle && <h2 class="reveal" {...bcmsField("about.storyTitle")}>{about.storyTitle}</h2>}
+          {about.storyTitle && <h2 class="reveal" {...bcmsField("about.storyTitle")} set:html={rich(about.storyTitle)} />}
           <div class="prose reveal" style="margin-top:1.5rem" {...bcmsField("about.story", "richtext")} set:html={about.story.html} />
         </div>
       </section>
