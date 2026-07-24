@@ -1,5 +1,5 @@
 ---
-import type { CaseStudy } from "../lib/cms";
+import { rich, type CaseStudy } from "../lib/cms";
 import type { Entry } from "../lib/content";
 interface Props { study: Entry<CaseStudy>; }
 const { study } = Astro.props;
@@ -9,7 +9,7 @@ const f = study.data;
   {f.coverImage?.url && <div class="thumb"><img src={f.coverImage.url} alt={f.coverImage.alt ?? ""} loading="lazy" /></div>}
   <div class="body">
     {f.client && <span class="kicker">{f.client}</span>}
-    <h3>{f.title}</h3>
-    {f.summary && <p>{f.summary}</p>}
+    <h3 set:html={rich(f.title)} />
+    {f.summary && <p set:html={rich(f.summary)} />}
   </div>
 </a>

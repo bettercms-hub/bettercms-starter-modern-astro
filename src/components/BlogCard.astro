@@ -1,5 +1,5 @@
 ---
-import { refData, type Author, type BlogPost } from "../lib/cms";
+import { refData, rich, type Author, type BlogPost } from "../lib/cms";
 import type { Entry } from "../lib/content";
 interface Props { post: Entry<BlogPost>; }
 const { post } = Astro.props;
@@ -10,8 +10,8 @@ const author = refData<Author>(f.author);
   {f.coverImage?.url && <div class="thumb"><img src={f.coverImage.url} alt={f.coverImage.alt ?? ""} loading="lazy" /></div>}
   <div class="body">
     {f.tags?.[0] && <span class="kicker">{f.tags[0]}</span>}
-    <h3>{f.title}</h3>
-    {f.excerpt && <p>{f.excerpt}</p>}
+    <h3 set:html={rich(f.title)} />
+    {f.excerpt && <p set:html={rich(f.excerpt)} />}
     <div class="meta">{author ? `${author.name} · ` : ""}{f.publishedDate}</div>
   </div>
 </a>
