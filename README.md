@@ -18,8 +18,7 @@ point it at any BetterCMS project with the same model slugs.
   (Organization, WebSite, BlogPosting, Article).
 - **Custom code** — the `site` model's `customHeadHtml` / `customBodyEndHtml` are injected into
   `<head>` and end-of-`<body>`.
-- **Live preview** — editable fields carry `data-bcms-field` attributes when built with
-  `BCMS_ANNOTATE=1`.
+- **Live preview** — editable fields carry `data-bcms-field` attributes on every build.
 
 ## Local development
 
