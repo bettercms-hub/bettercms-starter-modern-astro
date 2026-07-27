@@ -1,0 +1,24 @@
+---
+/**
+ * Cloudflare Turnstile widget for the public forms.
+ *
+ * These forms (contact + newsletter) were honeypot-only: the site key was already being
+ * read in lib/content.ts but no widget was ever rendered and no token was ever sent, so
+ * ticking "CAPTCHA" on the form in BetterCMS did nothing here. The two "classic" starters
+ * render it via the SDK's <BcmsBlocks>; this is the equivalent for the hand-rolled forms.
+ *
+ * Reads the key itself instead of taking a prop — NewsletterForm lives inside Footer,
+ * which would otherwise need the key threaded in from every layout that renders it.
+ *
+ * Renders nothing when no site key is configured, so a project without Turnstile is
+ * unaffected. The api.js loader lives in Base.astro so it is emitted once per page even
+ * when both forms are present.
+ *
+ * Placed INSIDE the <form>: that is what makes Turnstile inject its hidden
+ * `cf-turnstile-response` input, which scripts/forms.ts lifts out and sends as a sibling
+ * of `data` (the shape the API expects).
+ */
+import { getForms } from "../lib/content";
+const { turnstileSiteKey } = getForms();
+---
+{turnstileSiteKey && <div class="cf-turnstile" data-sitekey={turnstileSiteKey}></div>}
