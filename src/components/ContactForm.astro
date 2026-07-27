@@ -1,5 +1,6 @@
 ---
 import type { DeliveryForm } from "@bettercms-ai/sdk";
+import Turnstile from "./Turnstile.astro";
 interface Props { form: DeliveryForm; }
 const { form } = Astro.props;
 const honeypot = form.honeypotField ?? null;
@@ -37,6 +38,7 @@ const htmlType = (t: string): InputType =>
   {honeypot && (
     <div class="visually-hidden" aria-hidden="true"><input tabindex="-1" autocomplete="off" name={honeypot} /></div>
   )}
+  <Turnstile />
   <p class="field-error" data-form-general hidden>Something went wrong. Please try again.</p>
   <button class="btn btn--accent" type="submit">{form.submitLabel ?? "Send"} <span class="arrow">→</span></button>
   <p class="form-status ok" data-form-success hidden>{form.successMessage ?? "Thanks! We'll be in touch soon."}</p>
