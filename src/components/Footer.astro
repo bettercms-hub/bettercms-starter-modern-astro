@@ -1,6 +1,5 @@
 ---
 import type { DeliveryForm } from "@bettercms-ai/sdk";
-import { bcmsField } from "../lib/bcms";
 import { items, type NavLink, type Site, type Social } from "../lib/cms";
 import NewsletterForm from "./NewsletterForm.astro";
 interface Props { site?: Site; newsletter?: DeliveryForm; }
@@ -14,7 +13,10 @@ const brand = site?.brandName ?? "Studio";
     <div class="footer-grid">
       <div>
         <a href="/" class="brand">{brand}<span class="dot">.</span></a>
-        {site?.footerTagline?.html && <p class="tagline" {...bcmsField("site.footerTagline", "richtext")} set:html={site.footerTagline.html} />}
+        {/* No binding: `footerTagline` belongs to the `site` singleton, a DIFFERENT document
+            from the page entry the editor loads. A page-scoped path can never resolve to it,
+            so declaring one only produces an orphan. Site chrome is edited in Site settings. */}
+        {site?.footerTagline?.html && <p class="tagline" set:html={site.footerTagline.html} />}
         {socials.length > 0 && (
           <div class="socials">
             {socials.map((s) => <a href={s.href} target="_blank" rel="noopener noreferrer">{s.label}</a>)}

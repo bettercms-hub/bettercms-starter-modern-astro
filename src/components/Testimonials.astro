@@ -1,4 +1,5 @@
 ---
+import { bcmsField } from "../lib/bcms";
 import type { Testimonial } from "../lib/cms";
 interface Props { data: Testimonial[]; }
 const { data } = Astro.props;
@@ -6,14 +7,14 @@ const { data } = Astro.props;
 {data.length > 0 && (
   <section class="section container">
     <div class="section-head reveal"><p class="eyebrow">In their words</p><h2>What partners say</h2></div>
-    <div class="quotes">
-      {data.map((t) => (
+    <div class="quotes" {...bcmsField("testimonials", "array")}>
+      {data.map((t, i) => (
         <figure class="quote reveal">
           <blockquote>“{t.quote}”</blockquote>
           <figcaption class="who">
-            {t.avatar?.url && <img src={t.avatar.url} alt={t.avatar.alt ?? t.authorName ?? ""} />}
+            {t.avatar?.url && <img src={t.avatar.url} alt={t.avatar.alt ?? t.authorName ?? ""} {...bcmsField(`home.testimonials[${i}].avatar`, "image")} />}
             <span>
-              {t.authorName && <span class="name">{t.authorName}</span>}
+              {t.authorName && <span class="name" {...bcmsField(`home.testimonials[${i}].authorName`)}>{t.authorName}</span>}
               {t.authorRole && <span class="role"> — {t.authorRole}</span>}
             </span>
           </figcaption>

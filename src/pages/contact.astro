@@ -18,9 +18,9 @@ const pageSeo = seo({
   <main class="section container">
     <div class="split">
       <div class="reveal">
-        {contact?.eyebrow && <p class="eyebrow" {...bcmsField("contact.eyebrow")} set:html={rich(contact.eyebrow)} />}
-        <h1 {...bcmsField("contact.heroTitle")} set:html={rich(contact?.heroTitle, "Get in touch")} />
-        {contact?.heroSubtitle && <p class="lead" style="margin-top:1.25rem" {...bcmsField("contact.heroSubtitle")} set:html={rich(contact.heroSubtitle)} />}
+        {contact?.eyebrow && <p class="eyebrow" {...bcmsField("eyebrow")} set:html={rich(contact.eyebrow)} />}
+        <h1 {...bcmsField("heroTitle")} set:html={rich(contact?.heroTitle, "Get in touch")} />
+        {contact?.heroSubtitle && <p class="lead" style="margin-top:1.25rem" {...bcmsField("heroSubtitle")} set:html={rich(contact.heroSubtitle)} />}
       </div>
       <div class="form-card reveal">
         {form ? <ContactForm form={form} /> : <p class="lead">Add a form named “Contact” in BetterCMS to enable this form.</p>}
