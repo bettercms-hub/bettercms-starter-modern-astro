@@ -7,8 +7,8 @@ const { data } = Astro.props;
 {data.ctaHeading?.html && (
   <section class="section container">
     <div class="cta on-ink reveal">
-      <h2 {...bcmsField("home.ctaHeading", "richtext")} set:html={data.ctaHeading.html} />
-      {data.ctaBody?.html && <p class="lead" {...bcmsField("home.ctaBody", "richtext")} set:html={data.ctaBody.html} />}
+      <h2 {...bcmsField("ctaHeading", "richtext")} set:html={data.ctaHeading.html} />
+      {data.ctaBody?.html && <p class="lead" {...bcmsField("ctaBody", "richtext")} set:html={data.ctaBody.html} />}
       {data.ctaButtonText && data.ctaButtonHref && (
         <a class="btn btn--accent magnetic" href={data.ctaButtonHref}>{data.ctaButtonText} <span class="arrow">→</span></a>
       )}

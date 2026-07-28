@@ -2,10 +2,10 @@
 import { bcmsField } from "../lib/bcms";
 import type { Stat } from "../lib/cms";
 interface Props { data: Stat[]; field?: string; }
-const { data, field = "home.stats" } = Astro.props;
+const { data, field = "stats" } = Astro.props;
 ---
 {data.length > 0 && (
   <div class="stats reveal" {...bcmsField(field, "array")}>
-    {data.map((s) => <div class="stat"><div class="num">{s.value}</div><div class="lbl">{s.label}</div></div>)}
+    {data.map((s, i) => <div class="stat"><div class="num" {...bcmsField(`${field}[${i}].value`)}>{s.value}</div><div class="lbl" {...bcmsField(`${field}[${i}].label`)}>{s.label}</div></div>)}
   </div>
 )}

@@ -8,23 +8,23 @@ const { data } = Astro.props;
 ---
 <section class="hero on-ink">
   <div class="container">
-    {data.eyebrow?.html && <p class="eyebrow hero-eyebrow" {...bcmsField("home.eyebrow", "richtext")} set:html={data.eyebrow.html} />}
-    <h1 {...bcmsField("home.heroTitle", "richtext")}>
+    {data.eyebrow?.html && <p class="eyebrow hero-eyebrow" {...bcmsField("eyebrow", "richtext")} set:html={data.eyebrow.html} />}
+    <h1 {...bcmsField("heroTitle", "richtext")}>
       <span class="reveal-words" set:html={data.heroTitle?.html ?? ""} />
     </h1>
-    {data.heroSubtitle?.html && <p class="lead hero-lead" {...bcmsField("home.heroSubtitle", "richtext")} set:html={data.heroSubtitle.html} />}
+    {data.heroSubtitle?.html && <p class="lead hero-lead" {...bcmsField("heroSubtitle", "richtext")} set:html={data.heroSubtitle.html} />}
     <div class="hero-cta">
       {data.primaryCtaText && data.primaryCtaHref && (
         <a class="btn btn--accent magnetic" href={data.primaryCtaHref}>{data.primaryCtaText} <span class="arrow">→</span></a>
       )}
       {data.secondaryCtaText && data.secondaryCtaHref && (
-        <a class="btn btn--ghost magnetic" href={data.secondaryCtaHref}>{data.secondaryCtaText}</a>
+        <a class="btn btn--ghost magnetic" href={data.secondaryCtaHref} {...bcmsField("secondaryCtaText")}>{data.secondaryCtaText}</a>
       )}
     </div>
   </div>
   {data.heroImage?.url && (
     <div class="container">
-      <figure class="hero-figure" {...bcmsField("home.heroImage", "image")}>
+      <figure class="hero-figure" {...bcmsField("heroImage", "image")}>
         <img src={data.heroImage.url} alt={data.heroImage.alt ?? ""} />
       </figure>
     </div>

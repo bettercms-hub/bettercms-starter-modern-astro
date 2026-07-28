@@ -9,15 +9,15 @@ const { heading, data } = Astro.props;
     {heading?.html && (
       <div class="section-head reveal">
         <p class="eyebrow">What we do</p>
-        <h2 {...bcmsField("home.featuresHeading", "richtext")} set:html={heading.html} />
+        <h2 {...bcmsField("featuresHeading", "richtext")} set:html={heading.html} />
       </div>
     )}
-    <div class="bento" {...bcmsField("home.features", "array")}>
-      {data.map((f) => (
+    <div class="bento" {...bcmsField("features", "array")}>
+      {data.map((f, i) => (
         <article class="feature reveal">
-          {f.icon && <div class="ic" aria-hidden>{f.icon}</div>}
-          <h3>{f.title}</h3>
-          {f.body && <p>{f.body}</p>}
+          {f.icon && <div class="ic" aria-hidden {...bcmsField(`home.features[${i}].icon`)}>{f.icon}</div>}
+          <h3 {...bcmsField(`home.features[${i}].title`)}>{f.title}</h3>
+          {f.body && <p {...bcmsField(`home.features[${i}].body`)}>{f.body}</p>}
         </article>
       ))}
     </div>

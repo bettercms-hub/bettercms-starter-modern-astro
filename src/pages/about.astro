@@ -19,12 +19,12 @@ const pageSeo = seo({
   <main>
     <section class="section container">
       <div class="section-head reveal">
-        {about?.eyebrow && <p class="eyebrow" {...bcmsField("about.eyebrow")} set:html={rich(about.eyebrow)} />}
-        <h1 {...bcmsField("about.heroTitle")} set:html={rich(about?.heroTitle, "About")} />
-        {about?.heroSubtitle && <p class="lead" style="margin-top:1.25rem" {...bcmsField("about.heroSubtitle")} set:html={rich(about.heroSubtitle)} />}
+        {about?.eyebrow && <p class="eyebrow" {...bcmsField("eyebrow")} set:html={rich(about.eyebrow)} />}
+        <h1 {...bcmsField("heroTitle")} set:html={rich(about?.heroTitle, "About")} />
+        {about?.heroSubtitle && <p class="lead" style="margin-top:1.25rem" {...bcmsField("heroSubtitle")} set:html={rich(about.heroSubtitle)} />}
       </div>
       {about?.heroImage?.url && (
-        <figure class="hero-figure reveal" style="margin-top:3rem" {...bcmsField("about.heroImage", "image")}>
+        <figure class="hero-figure reveal" style="margin-top:3rem" {...bcmsField("heroImage", "image")}>
           <img src={about.heroImage.url} alt={about.heroImage.alt ?? ""} />
         </figure>
       )}
@@ -33,8 +33,8 @@ const pageSeo = seo({
     {about?.story?.html && (
       <section class="section--tight container">
         <div class="article" style="padding-block:0">
-          {about.storyTitle && <h2 class="reveal" {...bcmsField("about.storyTitle")} set:html={rich(about.storyTitle)} />}
-          <div class="prose reveal" style="margin-top:1.5rem" {...bcmsField("about.story", "richtext")} set:html={about.story.html} />
+          {about.storyTitle && <h2 class="reveal" {...bcmsField("storyTitle")} set:html={rich(about.storyTitle)} />}
+          <div class="prose reveal" style="margin-top:1.5rem" {...bcmsField("story", "richtext")} set:html={about.story.html} />
         </div>
       </section>
     )}
@@ -42,16 +42,16 @@ const pageSeo = seo({
     {values.length > 0 && (
       <section class="section container">
         <div class="section-head reveal"><p class="eyebrow">How we work</p><h2>What we value</h2></div>
-        <div class="bento" {...bcmsField("about.values", "array")}>
-          {values.map((v) => <article class="feature reveal"><h3>{v.title}</h3>{v.body && <p>{v.body}</p>}</article>)}
+        <div class="bento" {...bcmsField("values", "array")}>
+          {values.map((v, i) => <article class="feature reveal"><h3 {...bcmsField(`about.values[${i}].title`)}>{v.title}</h3>{v.body && <p {...bcmsField(`about.values[${i}].body`)}>{v.body}</p>}</article>)}
         </div>
       </section>
     )}
 
     {stats.length > 0 && (
       <section class="section--tight"><div class="container">
-        <div class="stats reveal" {...bcmsField("about.stats", "array")}>
-          {stats.map((s) => <div class="stat"><div class="num">{s.value}</div><div class="lbl">{s.label}</div></div>)}
+        <div class="stats reveal" {...bcmsField("stats", "array")}>
+          {stats.map((s, i) => <div class="stat"><div class="num" {...bcmsField(`about.stats[${i}].value`)}>{s.value}</div><div class="lbl" {...bcmsField(`about.stats[${i}].label`)}>{s.label}</div></div>)}
         </div>
       </div></section>
     )}
@@ -59,7 +59,7 @@ const pageSeo = seo({
     {team.length > 0 && (
       <section class="section container">
         <div class="section-head reveal"><p class="eyebrow">The people</p><h2>Meet the studio</h2></div>
-        <div class="card-grid" {...bcmsField("about.team", "reference")}>
+        <div class="card-grid" {...bcmsField("team", "reference")}>
           {team.map((m) => (
             <article class="feature reveal" style="display:grid;gap:1rem">
               {m.avatar?.url && <img src={m.avatar.url} alt={m.avatar.alt ?? m.name} style="width:4rem;height:4rem;border-radius:999px;object-fit:cover" />}
