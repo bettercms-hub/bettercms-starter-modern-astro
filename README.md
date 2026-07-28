@@ -20,6 +20,25 @@ point it at any BetterCMS project with the same model slugs.
   `<head>` and end-of-`<body>`.
 - **Live preview** — editable fields carry `data-bcms-field` attributes on every build.
 
+## Known limitation — this starter does not render BetterCMS *pages*
+
+This is a **hand-authored showcase**, not a block-driven site. Every section (`Hero.astro`,
+`Stats.astro`, `Features.astro`, `Testimonials.astro`, `Cta.astro`, the contact and newsletter
+forms) is a bespoke component reading typed fields off the `home` / `about` / `contact`
+singletons. Accordingly `scripts/fetch-content.mjs` fetches **entries and forms only — never
+`pages`**, and nothing here mounts `<BcmsBlocks>`. Its only BetterCMS dependencies are
+`@bettercms-ai/sdk` and `@bettercms-ai/types`; the `@bettercms-ai/astro` adapter is not installed.
+
+**What that means:** anything you place on a *page* in the Visual Editor — a form block, a
+section, a slider — renders **nothing** on this site. Those pages have no route here at all.
+Edit the content-model entries instead; the BetterCMS entry form is the editing surface for this
+design, and live preview still maps to it through `data-bcms-field`.
+
+**If you want the Visual Editor's block canvas to drive the site**, use `bettercms-starter-astro`
+(or `bettercms-starter` for Next) — both mount `<BcmsBlocks>` and render whatever the builder
+produces. Don't try to mix the two on one page: a page is either block-driven or field-driven,
+and adding fields to a block page breaks its canvas binding.
+
 ## Local development
 
 ```bash
