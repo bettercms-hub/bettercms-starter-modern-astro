@@ -67,6 +67,11 @@ document.addEventListener("astro:page-load", () => {
       ctrl = new AbortController();
       try {
         const res = await fetch(`${c.apiUrl}/api/v1/delivery/search?project=${encodeURIComponent(project)}&q=${encodeURIComponent(q)}&limit=8`, { signal: ctrl.signal });
+        // The API distinguishes "search is switched off for this site" (404) from "nothing
+        // matched" (200 with no hits). Reading `data.hits ?? []` collapsed the two, so a site
+        // with search disabled told every visitor their query had no results.
+        if (res.status === 404) { results.innerHTML = empty("Search isn’t available on this site."); return; }
+        if (!res.ok) { results.innerHTML = empty("Search is temporarily unavailable."); return; }
         const data = (await res.json()) as { hits?: Hit[] };
         const hits = (data.hits ?? [])
           .map((h) => ({ ...h, href: c.pathMap[h.slug] ?? (h.type === "page" ? h.url : "") }))
@@ -74,7 +79,10 @@ document.addEventListener("astro:page-load", () => {
         results.innerHTML = hits.length
           ? hits.map((h) => `<a class="search-hit" href="${h.href}"><span class="search-kind">${h.type}</span><span class="t">${esc(h.title)}</span>${h.snippet ? `<span class="s">${h.snippet}</span>` : ""}</a>`).join("")
           : empty(`No results for “${esc(q)}”.`);
-      } catch { /* aborted/offline */ }
+      } catch (err) {
+        if ((err as Error)?.name === "AbortError") return; // superseded by a newer keystroke
+        results.innerHTML = empty("Search is temporarily unavailable.");
+      }
     }, 200);
   });
 });
