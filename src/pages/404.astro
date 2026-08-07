@@ -1,0 +1,25 @@
+---
+/** The build shipped no 404 page, so `astro build` emitted no dist/404.html and every
+ *  unmatched URL fell through to whatever the host did with it. BetterCMS hosting now
+ *  serves /404.html with a real 404 status for unmatched paths on a static build
+ *  (infra/nginx/sites.conf, @not_found), so this file is what visitors and crawlers get.
+ *  Kept static and CMS-free on purpose: this page must render even when the content
+ *  fetch is the thing that failed. */
+import Base from "../layouts/Base.astro";
+import { seo } from "../lib/seo";
+
+const pageSeo = seo({
+  title: "Page not found",
+  metaDescription: "That page doesn’t exist.",
+});
+---
+<Base seo={pageSeo}>
+  <main class="section container">
+    <div class="reveal">
+      <p class="eyebrow">404</p>
+      <h1>Page not found</h1>
+      <p class="lead" style="margin-top:1.25rem">That link is broken, or the page has moved.</p>
+      <a class="btn btn--accent" style="margin-top:2rem" href="/">Back to home</a>
+    </div>
+  </main>
+</Base>
