@@ -1,0 +1,75 @@
+name: Template health
+
+# Templates rot from the OUTSIDE. Nothing in this repo has to change for it to stop
+# building. On 2026-08-31 `@bettercms-ai/astro@0.9.0` published a component importing a
+# file it did not ship; every fresh install of the Astro starter broke while its repo sat
+# untouched, and the break only surfaced because an unrelated dependency PR happened to
+# refresh a lockfile. Days of "green" meant nothing had been built, not that it worked.
+#
+# Two deliberate choices make this catch what build.yml cannot:
+#
+#   1. `npm install`, NOT `npm ci`. A fresh resolve of the declared ranges is what a new
+#      customer actually gets today. `npm ci` replays the committed lockfile and would
+#      have stayed green through that entire incident.
+#   2. A schedule, because the failure arrives with no commit and therefore no PR.
+#
+# Upstream only. Generated projects and forks skip the job outright, so this never bills a
+# customer's Actions minutes — the same reason build.yml is deliberately PR-only.
+#
+# A red run here means "a new customer cannot build this template today". Treat it as a
+# release incident, not a flake: check what moved with
+#   npm ls @bettercms-ai/astro @bettercms-ai/sdk @bettercms-ai/next next astro
+
+on:
+  schedule:
+    # Daily. Offset per-repo so the four templates do not all resolve npm at once.
+    - cron: "37 6 * * *"
+  workflow_dispatch:
+
+concurrency:
+  group: template-health
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  fresh-install:
+    name: Fresh install + build
+    # Never runs anywhere but upstream. `github.repository` is the full owner/name, so a
+    # generated project (a NEW repo, not a fork) is excluded by this too.
+    if: github.repository == 'bettercms-hub/bettercms-starter-modern-astro'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      # The whole point: resolve the declared ranges fresh, ignoring the lockfile.
+      - name: Install from the declared ranges (no lockfile)
+        run: |
+          rm -f package-lock.json
+          npm install --no-audit --no-fund
+
+      - name: Record what actually resolved
+        run: npm ls --depth=0 || true
+
+      # Byte-identical to build.yml's snapshot so the two gates cannot drift apart.
+      - name: Seed a stand-in content snapshot
+        run: |
+          cat > bcms-content.json <<'JSON'
+          {
+            "collections": {
+              "site": [{ "slug": "site", "data": { "brandName": "CI" } }],
+              "blog-post": [{ "slug": "ci-post", "data": { "title": "CI post" } }],
+              "case-study": [{ "slug": "ci-case", "data": { "title": "CI case" } }]
+            },
+            "pages": [],
+            "forms": []
+          }
+          JSON
+
+      - name: Build
+        run: npm run build

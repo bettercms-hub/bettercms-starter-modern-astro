@@ -1,0 +1,69 @@
+name: Build
+
+# Build gate: builds the starter on every PR. This repo is a
+# template people fork, so a broken build here is shipped to every one of them.
+#
+# npm, not bun: this repo commits BOTH bun.lock and package-lock.json. npm is what
+# `npm run fetch-content` / the deploy Action assume.
+
+# This repo had NO workflows at all until now, which is how it merged an Astro 5 -> 7
+# major with a green tick that only ever meant "CodeQL ran". Drift that arrives with no
+# commit is covered separately by template-health.yml, which runs upstream only.
+#
+# Pull requests only, deliberately. This file is copied into every project generated from
+# this template, where `bcms-rebuild.yml` ALREADY builds (and deploys) on push — gating push
+# here would build every change twice and bill it to the user's Actions minutes for no extra
+# signal. A PR is where a broken build should be caught, and nothing else covers that.
+on:
+  pull_request:
+
+# Cancel superseded runs on the same ref (e.g. rapid pushes to a PR branch).
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      # --frozen-lockfile equivalent: installs exactly what package-lock.json pins,
+      # and fails if the lockfile has drifted from package.json.
+      - name: Install dependencies
+        run: npm ci
+
+      # `bcms-content.json` is the deploy Action's build snapshot and is gitignored, so
+      # CI never has one — and a static build resolves ALL content from it. This writes a
+      # throwaway stand-in so the build has something to render. It is NOT the template's
+      # content; it only needs to exist and carry one entry per collection.
+      #
+      # Astro tolerates a missing snapshot (getPage → undefined → "not published yet"),
+      # but the Next starter's `output: export` refuses a dynamic route whose
+      # generateStaticParams() returns []. Both repos seed the same stand-in so their
+      # gates stay identical and neither can regress into needing real credentials.
+      - name: Seed a stand-in content snapshot
+        run: |
+          cat > bcms-content.json <<'JSON'
+          {
+            "collections": {
+              "site": [{ "slug": "site", "data": { "brandName": "CI" } }],
+              "blog-post": [{ "slug": "ci-post", "data": { "title": "CI post" } }],
+              "case-study": [{ "slug": "ci-case", "data": { "title": "CI case" } }]
+            },
+            "pages": [],
+            "forms": []
+          }
+          JSON
+
+      - name: Build
+        run: npm run build
